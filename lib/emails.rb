@@ -24,7 +24,7 @@ class Emails
 
     destination_emails = emails.map do |e|
       u = User.find(email: e)
-      u.preferred_email == nil ? e : u.preferred_email
+      u.contact_email
     end
 
     completed_email = CompletedEmail.new(:to => destination_emails.join(","), :subject => subject,
@@ -60,12 +60,12 @@ class Emails
     to = []
     all_previous_commenters = commit.comments.map(&:user).reject(&:demo?).reject(&:deleted?)
     author = commit.grit_commit.author
-    user = User.find(:preferred_email => author.email)
+    user = User.find_by_email(author.email)
+    to << user.contact_email
 
-    to << author.email if user && !user.deleted?
     # There shouldn't be deleted users with saved searches, but filter them out just in case.
     cc = (users_with_saved_searches_matching(commit, :email_comments => true).reject(&:deleted?) +
-          all_previous_commenters).map(&:email).uniq
+          all_previous_commenters).map(&:contact_email).uniq
     to += cc
     return if to.empty?
 
@@ -97,7 +97,7 @@ class Emails
     html_body = commit_email_body(commit)
     # Shouldn't be any saved searches for deleted users, but remove them just in case.
     to = users_with_saved_searches_matching(commit, :email_commits => true).
-        reject(&:deleted?).map(&:email).uniq
+        reject(&:deleted?).map(&:contact_email).uniq
 
     return if to.empty? # Sometimes... there's just nobody listening.
 

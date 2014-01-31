@@ -71,6 +71,10 @@ class User < Sequel::Model
   def admin?() permission == "admin" end
   def deleted?() deleted_at != nil end
 
+  def contact_email
+    preferred_email.nil? ? email : preferred_email
+  end
+
   def saved_searches
     if demo?
       searches = @session[:saved_searches].map { |options| create_cookie_backed_saved_search(options) }
@@ -122,4 +126,7 @@ class User < Sequel::Model
     search
   end
 
+  def self.find_by_email(email)
+    self.class.where('preferred_email = ? OR email = ?', email, email)
+  end
 end
