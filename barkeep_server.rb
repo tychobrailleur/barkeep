@@ -267,6 +267,9 @@ class BarkeepServer < Sinatra::Base
     if preference == "displayname"
       current_user.name = params[:value]
       current_user.save
+    elsif preference == "preferredemail"
+      current_user.preferred_email = params[:value]
+      current_user.save
     elsif ["line_length", "default_to_side_by_side"].include? preference
       current_user.send :"#{preference}=", params[:value]
       current_user.save

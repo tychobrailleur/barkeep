@@ -15,6 +15,14 @@
       </tr>
       <tr><td>Email</td><td><%= current_user.email %></td></tr>
       <tr>
+        <td>Preferred Email</td>
+        <td>
+          <span id="editPreferredEmail" class="editable west" rel="tipsy" title="Edit">
+            <%= current_user.preferred_email %>
+          </span>
+        </td>
+      </tr>
+      <tr>
         <td>Gravatar</td>
         <td>
           <a class="gravatarLink" href="https://en.gravatar.com/site/login" target="_blank">
